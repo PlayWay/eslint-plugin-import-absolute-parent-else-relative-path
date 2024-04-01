@@ -1,0 +1,23 @@
+{
+  "name": "eslint-plugin-import-absolute-parent-else-relative-path",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {},
+  "description": "Eslint rule enforcing absolute or relative imports",
+  "license": "MIT",
+  "author": {
+    "email": "dim.art2011@yandex.ru",
+    "name": "Dmitry Gridnev"
+  },
+  "categories": [
+    "Linters"
+  ],
+  "repository": {
+    "url": "https://github.com/PlayWay/eslint-plugin-import-absolute-parent-else-relative-path"
+  },
+  "keywords": [
+    "eslint",
+    "imports",
+    "eslint-plugin"
+  ]
+}
