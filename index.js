@@ -60,22 +60,20 @@ exports.rules = {
       return {
         ImportDeclaration(node) {
           const source = node.source.value;
-          const filename = context.getFilename();
+          const currentPathFilename = context.getFilename();
 
-          const globalAbsolutePath = path.normalize(
-            path.join(path.dirname(filename), source)
-          );
-          const localAbsolutePath = path.relative(
-            path.dirname(filename),
-            globalAbsolutePath
-          );
-          const relativePath = path.relative(
-            path.relative(baseUrl, context.getCwd()),
-            source
-          );
-          const expectedPath = path.relative(baseUrl, globalAbsolutePath);
+          /**
+           * Since the path is calculated together with the import file, path.relative always gives the result '../',
+           * although in fact it does not go anywhere from the folder.
+           * Therefore it is necessary to cut out the context file (the file from which we are looking for import paths) from the path.
+           * @type {string}
+           */
+          const pathWithoutSelfName = currentPathFilename.substring(0,currentPathFilename.lastIndexOf('/'))
+          // check exist in node_modules
+          const isLibrary = fs.existsSync(path.join(path.join(baseDir,'node_modules'), source))
+          const relativePath = path.relative(pathWithoutSelfName,path.join(baseUrl,source));
 
-          if (!relativePath.startsWith('../') && localAbsolutePath === source) {
+          if (!isLibrary && !relativePath.startsWith('..') && !source.startsWith('./') && relativePath !== source) {
             context.report({
               node,
               message: `Absolute path for child imports are not allowed. Use \`./${relativePath}\` instead of \`${source}\`.`,
@@ -86,6 +84,10 @@ exports.rules = {
             return;
           }
 
+          const globalAbsolutePath = path.normalize(
+            path.join(path.dirname(currentPathFilename), source)
+          );
+          const expectedPath = path.relative(baseUrl, globalAbsolutePath);
           if (source.startsWith('..') && source !== expectedPath) {
             context.report({
               node,
