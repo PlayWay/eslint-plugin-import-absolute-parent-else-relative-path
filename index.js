@@ -73,7 +73,7 @@ exports.rules = {
           const isLibrary = fs.existsSync(path.join(path.join(baseDir,'node_modules'), source))
           const relativePath = path.relative(pathWithoutSelfName,path.join(baseUrl,source));
 
-          if (!isLibrary && !relativePath.startsWith('..') && !source.startsWith('./') && relativePath !== source) {
+          if (!isLibrary && relativePath && !relativePath.startsWith('..') && !source.startsWith('./') && relativePath !== source) {
             context.report({
               node,
               message: `Absolute path for child imports are not allowed. Use \`./${relativePath}\` instead of \`${source}\`.`,
