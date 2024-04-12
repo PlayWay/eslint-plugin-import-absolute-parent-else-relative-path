@@ -15,7 +15,7 @@ For example:
 - We are in file: ```b/misc/button/index.ts```
 - And trying to import data from ```b/misc/types.ts```
 ```
-❌ .../types.ts
+❌ ../types.ts
 ✅ b/misc/types.ts
 🔧 ../types.ts -> b/misc/types.ts
 ```
