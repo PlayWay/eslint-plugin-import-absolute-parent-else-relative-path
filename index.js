@@ -1,6 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
+const isWin = process.platform === 'win32';
+const pathSlash = isWin ? '\\' : '/';
+
 function has(map, path) {
   let inner = map;
   for (let step of path.split('.')) {
@@ -17,7 +20,7 @@ function findDirWithFile(filename) {
 
   do {
     dir = path.dirname(dir);
-  } while (!fs.existsSync(path.join(dir, filename)) && dir !== '/');
+  } while (!fs.existsSync(path.join(dir, filename)) && dir !== pathSlash);
 
   if (!fs.existsSync(path.join(dir, filename))) {
     return;
@@ -68,17 +71,17 @@ exports.rules = {
            * Therefore it is necessary to cut out the context file (the file from which we are looking for import paths) from the path.
            * @type {string}
            */
-          const pathWithoutSelfName = currentPathFilename.substring(0,currentPathFilename.lastIndexOf('/'))
+          const pathWithoutSelfName = currentPathFilename.substring(0, currentPathFilename.lastIndexOf(pathSlash))
           // check exist in node_modules
-          const isLibrary = fs.existsSync(path.join(path.join(baseDir,'node_modules'), source))
-          const relativePath = path.relative(pathWithoutSelfName,path.join(baseUrl,source));
+          const isLibrary = fs.existsSync(path.join(path.join(baseDir, 'node_modules'), source))
+          const relativePath = path.relative(pathWithoutSelfName, path.join(baseUrl, source));
 
-          if (!isLibrary && relativePath && !relativePath.startsWith('..') && !source.startsWith('./') && relativePath !== source) {
+          if (!isLibrary && relativePath && !relativePath.startsWith('..') && !source.startsWith(`.${pathSlash}`) && relativePath !== source) {
             context.report({
               node,
-              message: `Absolute path for child imports are not allowed. Use \`./${relativePath}\` instead of \`${source}\`.`,
+              message: `Absolute path for child imports are not allowed. Use \`.${pathSlash}${relativePath}\` instead of \`${source}\`.`,
               fix: function (fixer) {
-                return fixer.replaceText(node.source, `'./${relativePath}'`);
+                return fixer.replaceText(node.source, `'.${pathSlash}${relativePath}'`);
               },
             });
             return;
