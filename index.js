@@ -54,7 +54,7 @@ function getBaseUrl(baseDir) {
 exports.rules = {
   'import-absolute-parent-else-relative-path': {
     meta: {
-      fixable: true,
+      fixable: 'code',
     },
     create: function (context) {
       const baseDir = findDirWithFile('package.json');
