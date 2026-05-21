@@ -36,7 +36,9 @@ function getBaseUrl(baseDir) {
     const tsconfig = JSON.parse(
       fs.readFileSync(path.join(baseDir, 'tsconfig.json'))
     );
-    if (has(tsconfig, 'compilerOptions.baseUrl')) {
+    if (has(tsconfig, 'compilerOptions.rootDir')) {
+      url = tsconfig.compilerOptions.rootDir;
+    } else if (has(tsconfig, 'compilerOptions.baseUrl')) {
       url = tsconfig.compilerOptions.baseUrl;
     }
   } else if (fs.existsSync(path.join(baseDir, 'jsconfig.json'))) {
